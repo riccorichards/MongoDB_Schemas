@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
 	firstName: {
 		type: String,
 		required: true
@@ -15,12 +15,12 @@ const userSchema = new mongoose.Schema({
 		unique: true,
 		index: true
 	},
-	password: {
+	passwordHash: {
 		type: String,
 		required: true,
 	}
 }, { timestamps: true })
 
-export default mongoose.model("User", userSchema)
+export default mongoose.model("User", UserSchema)
 
 //You're building a blog platform. Users can write articles, comment on articles, and like them. Each article has a title, content, author, and publication date.
