@@ -18,7 +18,13 @@ const UserSchema = new mongoose.Schema({
 	passwordHash: {
 		type: String,
 		required: true,
-	}
+	},
+	articles: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Article"
+		}
+	]
 }, { timestamps: true })
 
 export default mongoose.model("User", UserSchema)

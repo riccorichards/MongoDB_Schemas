@@ -13,6 +13,26 @@ const articleSchema = new mongoose.Schema({
 		type: mongoose.Types.ObjectId,
 		ref: "User",
 		required: true
+	},
+	comments: [
+		{
+			type: mongoose.Types.ObjectId,
+			ref: "Comments",
+		}
+	],
+	commentsAmount: {
+		type: Number,
+		default: 0
+	},
+	likes: [
+		{
+			type: mongoose.Types.ObjectId,
+			ref: "Likes"
+		}
+	],
+	likesAmount: {
+		type: Number,
+		default: 0
 	}
 }, { timestamps: true })
 

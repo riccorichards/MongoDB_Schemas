@@ -1,19 +1,32 @@
 import express from "express";
 import mongoose from "mongoose";
-import { createUser } from "./Blog/register/controller.js";
-import { registerValidation } from "./Blog/register/registerValidation.js";
-import { registerErrorhandler } from "./Blog/register/registerErrorhandler.js";
-const URL = "mongodb://127.0.0.1:27017/BlogSchema"
+import { createUser, getMe, loginUser } from "./Blog/BlogControllers/Authcontroller.js";
+import { registerValidation, loginValidation } from "./Blog/BlogValidation/AuthValidation.js";
+import { Errorhandler } from "./Blog/BlogValidation/Errorhandler.js";
+import checkerMiddleware from "./Blog/BlogValidation/checkerMiddleware.js";
+import { articleValidation, commentValidation } from "./Blog/BlogValidation/articleValidation.js";
+import { addLikes, createArticle, createComment } from "./Blog/BlogControllers/BlogsController.js";
+const BLOG_URL = "mongodb://127.0.0.1:27017/BlogSchema"
+const ECOMMERCE_URL = "mongodb://127.0.0.1:27017/Ecommerce"
 
-mongoose.connect(URL)
-	.then(() => console.log("Success connection"))
+const parsedUrl = new URL(BLOG_URL)
+const endpoint = parsedUrl.pathname + parsedUrl.search
+
+mongoose.connect(BLOG_URL)
+	.then(() => console.log(`Success connection to ${endpoint}`))
 	.catch(err => console.log("Error Connection", err))
 const PORT = process.env.PORT || 3000;
 
 const app = express()
 app.use(express.json())
-app.post("/register", registerValidation, registerErrorhandler, createUser)
 
+
+app.post("/blog/register", registerValidation, Errorhandler, createUser)
+app.post("/blog/login", loginValidation, Errorhandler, loginUser)
+app.get("/blog/me", checkerMiddleware, Errorhandler, getMe)
+app.post("/blog/create", articleValidation, Errorhandler, checkerMiddleware, createArticle)
+app.post("/blog/:id/comment", commentValidation, Errorhandler, checkerMiddleware, createComment)
+app.post("/blog/:id/like", checkerMiddleware, Errorhandler, addLikes)
 app.listen(PORT, (err) => {
 	err ? console.log("Something wents wrong...!", err) : console.log(`We are running at ${PORT}`)
 })

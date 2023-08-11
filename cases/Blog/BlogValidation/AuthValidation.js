@@ -6,3 +6,9 @@ export const registerValidation = [
 	body("email", "Invalid email format").isEmail(),
 	body("passwordHash", "Password must consist with 8 characters").isLength({ min: 8 })
 ]
+
+export const loginValidation = [
+	body("email", "Invalid email format").isEmail(),
+	body("passwordHash", "Password must consist with 8 characters").isLength({ min: 8 })
+]
+
