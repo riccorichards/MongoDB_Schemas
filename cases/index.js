@@ -4,9 +4,11 @@ import { createUser, getMe, loginUser } from "./Blog/BlogControllers/Authcontrol
 import { registerValidation, loginValidation } from "./Blog/BlogValidation/AuthValidation.js";
 import { Errorhandler } from "./Blog/BlogValidation/Errorhandler.js";
 import checkerMiddleware from "./Blog/BlogValidation/checkerMiddleware.js";
-import { articleValidation, commentValidation } from "./Blog/BlogValidation/articleValidation.js";
+import { articleValidation, commentValidation } from "./Blog/BlogValidation/createValidation.js";
 import { addLikes, createArticle, createComment } from "./Blog/BlogControllers/CreateController.js";
 import { deleteArticles, deleteComment, deleteLike } from "./Blog/BlogControllers/RemoveController.js";
+import { articleUpdate, commentUpdate, userUpdate } from "./Blog/BlogControllers/UpdateController.js";
+import { updateUserValidation, updateCommentValidation, updateArticleValidation } from "./Blog/BlogValidation/updateValidation.js";
 const BLOG_URL = "mongodb://127.0.0.1:27017/BlogSchema"
 const ECOMMERCE_URL = "mongodb://127.0.0.1:27017/Ecommerce"
 
@@ -26,13 +28,17 @@ app.get("/blog/me", checkerMiddleware, Errorhandler, getMe)
 
 app.post("/blog/register", registerValidation, Errorhandler, createUser)
 app.post("/blog/login", loginValidation, Errorhandler, loginUser)
-app.post("/blog/create", articleValidation, Errorhandler, checkerMiddleware, createArticle)
+app.post("/blog/article", articleValidation, Errorhandler, checkerMiddleware, createArticle)
 app.post("/blog/:id/comment", commentValidation, Errorhandler, checkerMiddleware, createComment)
 app.post("/blog/:id/like", checkerMiddleware, addLikes)
 
 app.delete("/blog/:id", checkerMiddleware, deleteArticles)
 app.delete("/blog/:Artid/comment/:Comid", checkerMiddleware, deleteComment)
 app.delete("/blog/:Artid/like/:Likid", checkerMiddleware, deleteLike)
+
+app.put("/blog/auth", checkerMiddleware, updateUserValidation, Errorhandler, userUpdate)
+app.put("/blog/article/:id", checkerMiddleware, updateArticleValidation, Errorhandler, articleUpdate)
+app.put("/blog/:id/comment/:commentId", checkerMiddleware, updateCommentValidation, commentUpdate)
 
 
 app.listen(PORT, (err) => {

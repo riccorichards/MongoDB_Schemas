@@ -40,5 +40,3 @@ const UserSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 export default mongoose.model("User", UserSchema)
-
-//You're building a blog platform. Users can write articles, comment on articles, and like them. Each article has a title, content, author, and publication date.
