@@ -5,7 +5,8 @@ import { registerValidation, loginValidation } from "./Blog/BlogValidation/AuthV
 import { Errorhandler } from "./Blog/BlogValidation/Errorhandler.js";
 import checkerMiddleware from "./Blog/BlogValidation/checkerMiddleware.js";
 import { articleValidation, commentValidation } from "./Blog/BlogValidation/articleValidation.js";
-import { addLikes, createArticle, createComment } from "./Blog/BlogControllers/BlogsController.js";
+import { addLikes, createArticle, createComment } from "./Blog/BlogControllers/CreateController.js";
+import { deleteArticles, deleteComment, deleteLike } from "./Blog/BlogControllers/RemoveController.js";
 const BLOG_URL = "mongodb://127.0.0.1:27017/BlogSchema"
 const ECOMMERCE_URL = "mongodb://127.0.0.1:27017/Ecommerce"
 
@@ -21,12 +22,19 @@ const app = express()
 app.use(express.json())
 
 
+app.get("/blog/me", checkerMiddleware, Errorhandler, getMe)
+
 app.post("/blog/register", registerValidation, Errorhandler, createUser)
 app.post("/blog/login", loginValidation, Errorhandler, loginUser)
-app.get("/blog/me", checkerMiddleware, Errorhandler, getMe)
 app.post("/blog/create", articleValidation, Errorhandler, checkerMiddleware, createArticle)
 app.post("/blog/:id/comment", commentValidation, Errorhandler, checkerMiddleware, createComment)
-app.post("/blog/:id/like", checkerMiddleware, Errorhandler, addLikes)
+app.post("/blog/:id/like", checkerMiddleware, addLikes)
+
+app.delete("/blog/:id", checkerMiddleware, deleteArticles)
+app.delete("/blog/:Artid/comment/:Comid", checkerMiddleware, deleteComment)
+app.delete("/blog/:Artid/like/:Likid", checkerMiddleware, deleteLike)
+
+
 app.listen(PORT, (err) => {
 	err ? console.log("Something wents wrong...!", err) : console.log(`We are running at ${PORT}`)
 })

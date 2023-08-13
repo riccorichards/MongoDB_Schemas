@@ -1,11 +1,11 @@
-import articleSchema from "../Schemas/blogArticleSchema.js";
-import UserSchema from "../Schemas/blogUserSchema.js";
-import articleComments from "../Schemas/articleComments.js";
-import articleLikes from "../Schemas/articleLikes.js";
+import ArticleSchema from "../Schemas/ArticleSchema.js";
+import UserSchema from "../Schemas/UserSchema.js";
+import CommentsSchema from "../Schemas/CommentsSchema.js";
+import LikesSchema from "../Schemas/LikesSchema.js";
 
 export const createArticle = async (req, res) => {
 	try {
-		const doc = new articleSchema({
+		const doc = new ArticleSchema({
 			title: req.body.title,
 			content: req.body.content,
 			author: req.userId
@@ -28,7 +28,7 @@ export const createArticle = async (req, res) => {
 export const createComment = async (req, res) => {
 	try {
 		const article = req.params.id
-		const doc = new articleComments({
+		const doc = new CommentsSchema({
 			content: req.body.content,
 			author: req.userId,
 			article: article
@@ -36,11 +36,15 @@ export const createComment = async (req, res) => {
 
 		const comment = await doc.save()
 
-		await articleSchema.findByIdAndUpdate(article,
+		await ArticleSchema.findByIdAndUpdate(article,
 			{
 				$push: { comments: comment._id },
 				$inc: { commentsAmount: 1 }
 			}, { new: true })
+
+		await UserSchema.findByIdAndUpdate(req.userId, {
+			$push: { comments: comment.id }
+		})
 
 		res.json(comment)
 	} catch (e) {
@@ -52,14 +56,14 @@ export const createComment = async (req, res) => {
 export const addLikes = async (req, res) => {
 	try {
 		const articleId = req.params.id
-		const doc = new articleLikes({
+		const doc = new LikesSchema({
 			article: articleId,
 			author: req.userId
 		})
 
 		const liked = await doc.save()
 
-		await articleSchema.findByIdAndUpdate(articleId,
+		await ArticleSchema.findByIdAndUpdate(articleId,
 			{
 				$push: { likes: liked._id },
 				$inc: { likesAmount: 1 }
@@ -67,9 +71,14 @@ export const addLikes = async (req, res) => {
 			{ new: true }
 		)
 
+		 
+		await UserSchema.findByIdAndUpdate(req.userId, {
+			$push: { Likes: liked.id }
+		})
 		res.json(liked)
 	} catch (e) {
 		console.log(e)
 		res.status(500)
 	}
 }
+

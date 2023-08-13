@@ -24,7 +24,19 @@ const UserSchema = new mongoose.Schema({
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Article"
 		}
-	]
+	],
+	comments: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Comments"
+		}
+	],
+	Likes: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Likes"
+		}
+	],
 }, { timestamps: true })
 
 export default mongoose.model("User", UserSchema)
